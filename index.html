@@ -1,0 +1,121 @@
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>VA Mapping</title>
+	<link rel="stylesheet" type="text/css" href="./src/css/style.css">
+	<link href="https://api.mapbox.com/mapbox-gl-js/v3.9.2/mapbox-gl.css" rel="stylesheet">
+	<script src="https://api.mapbox.com/mapbox-gl-js/v3.9.2/mapbox-gl.js"></script>
+</head>
+<body>
+	<div class="map-container">
+		<div id="map"></div>
+	</div>
+
+	<script type="module" src="./src/js/script.js" async></script>
+	<script>
+		mapboxgl.accessToken = 'pk.eyJ1IjoicmFua2VkY2hvaWNldmEiLCJhIjoiY201eTB3azNzMGZ0OTJrcTFrb2RoMzc1biJ9.ZbYa1MZw4vKjs8UIN8T-Qw';
+		const map = new mapboxgl.Map({
+			container: 'map', // container ID
+			// style: "mapbox://styles/rankedchoiceva/cm5yo1v4g003a01qzaril9y48/draft",
+			style: "mapbox://styles/rankedchoiceva/cm5yo1v4g003a01qzaril9y48",
+			center: [-79.50798, 38.033554], // starting position [lng, lat]. Note that lat must be set between -90 and 90
+			zoom: 6.1 // starting zoom
+			
+		});
+
+		map.on('click', 'usa-counties', (e) => {
+			const coordinates = e.features[0].geometry.coordinates.slice()[0][0];
+			const county = e.features[0].properties.NAME;
+			// console.log(coordinates)
+			// console.log(e.features)
+			// console.log(e.features[0].geometry.coordinates.slice()[0][0]);
+			// console.log(e.features[0].properties.COUNTYFP);
+			// console.log(e.features[0].properties.NAME);
+
+			// Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            if (['mercator', 'equirectangular'].includes(map.getProjection().name)) {
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+            }
+
+			new mapboxgl.Popup()
+				.setLngLat(coordinates)
+				.setHTML(`<h3>${county}</h3>`)
+				.addTo(map);
+
+		})
+
+		let hoveredPolygonId = null;
+
+		map.on('load', () => {
+			map.addSource('usa_counties-b2oig3', {
+				type: 'vector',
+				url: 'mapbox://rankedchoiceva.3tdpwa61',
+				promoteId: 'AFFGEOID'
+			});
+
+			// The feature-state dependent fill-opacity expression will render the hover effect
+			// when a feature's hover state is set to true.
+			map.addLayer({
+				'id': 'usa-counties-filler',
+				'type': 'fill',
+				'source': 'usa_counties-b2oig3',
+				'layout': {},
+				'source-layer': 'usa_counties-b2oig3',
+				'filter': ['==', 'STATEFP', '51'],
+				'paint': {
+					'fill-color': [
+						'case',
+						['boolean', ['feature-state', 'hover'], false],
+						'#627BC1',
+						'transparent'
+					],
+					'fill-opacity': [
+						'case',
+						['boolean', ['feature-state', 'hover'], false],
+						1,
+						0.5
+					]
+				}
+			});
+	
+			map.on('mousemove', 'usa-counties-filler', (e) => {
+				console.log('on mouse move the features are: ');
+				console.log(e.features);
+				console.log('and the features length is: ' + e.features.length);
+				if (e.features.length > 0) {
+					if (hoveredPolygonId !== null) {
+						map.setFeatureState(
+							{ source: 'usa_counties-b2oig3', sourceLayer: 'usa_counties-b2oig3', id: hoveredPolygonId },
+							{ hover: false }
+						);
+					}
+					hoveredPolygonId = e.features[0].id;
+					map.setFeatureState(
+						{ source: 'usa_counties-b2oig3', sourceLayer: 'usa_counties-b2oig3', id: hoveredPolygonId },
+						{ hover: true }
+					);
+				}
+			});
+	
+			// When the mouse leaves the state-fill layer, update the feature state of the
+			// previously hovered feature.
+			map.on('mouseleave', 'usa-counties-filler', () => {
+				if (hoveredPolygonId !== null) {
+					map.setFeatureState(
+						{ source: 'usa_counties-b2oig3', sourceLayer: 'usa_counties-b2oig3', id: hoveredPolygonId },
+						{ hover: false }
+					);
+				}
+				hoveredPolygonId = null;
+			});
+		})
+
+	</script>
+	
+</body>
+</html>

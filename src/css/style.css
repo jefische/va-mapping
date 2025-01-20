@@ -1,0 +1,15 @@
+.map-container {
+	display: flex;
+	justify-content: center;
+	padding-top: 50px;
+}
+#map { 
+	height: 500px;
+	/* width: 60%;  */
+	width: 960px; 
+	
+}
+footer {
+	display: flex;
+	justify-content: center;
+}
