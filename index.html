@@ -41,10 +41,15 @@
 				coordinates = coordinates[0]; // Chesterfield County has added layer of nested arrays
 			}
 
-			var countyIcon = county.replace(" ", "-");  // Replace spacing with hyphens
+			var countyIcon = county.replace(" ", "-").toLowerCase();  // Replace spacing with hyphens
 			if (countyDescription == undefined) {
 				countyDescription = "Not currently endorsing ranked choice voting";
 			}
+			if (countyURL == undefined) {
+				countyURL = "#";
+			}
+
+
 
 			let image_height, image_width = '20px';
 			fetch(`./src/assets/icons/${countyIcon}-icon.png`).then((res) => {
