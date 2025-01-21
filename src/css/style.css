@@ -5,10 +5,106 @@
 }
 #map { 
 	height: 500px;
-	/* width: 60%;  */
 	width: 960px; 
 	
 }
+/* mapbox popup styles **************************/
+.mapboxgl-popup-content {
+	border: 1px solid;
+	padding: 0;
+	width: 300px;
+}
+
+.mapboxgl-popup-close-button {
+	color: #fff;
+}
+
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+	border-top-color: #000;
+}
+
+.popup {
+	display: flex;
+	flex-direction: column;
+	height: 200px;
+	text-align: center;
+	width: 300px;
+	
+}
+
+a.county-header-container {
+	align-items: center;
+	display: flex;
+	flex-direction: row;
+	font-family: "Manrope", serif;
+	gap: 10px;
+	justify-content: center;
+}
+
+h2.county-header {
+	color: #464b6b;
+	font-size: 20px;
+}
+
+p.county-info {
+	font-family: "Manrope", serif;
+	font-optical-sizing: auto;
+	font-size: 14px;
+	font-style: normal;
+	margin: 0 10% 5%;
+	text-align: left;
+}
+
+/* card background **************************/
+
+.default-background {
+	background-color: #ddd;
+	height: 50%;
+}
+
+.albemarle-background {
+	background-image: url(../assets/images/banner-albemarle.avif);
+	background-position: center;
+	background-size: cover;
+	height: 50%;
+}
+
+.arlington-background {
+	background-image: url(../assets/images/banner-arlington.avif);
+	background-position: center;
+	background-size: cover;
+	height: 50%;
+}
+
+.charlottesville-background {
+	background-image: url(../assets/images/banner-charlottesville.avif);
+	background-position: center;
+	background-size: cover;
+	height: 50%;
+}
+
+.fairfax-city-background {
+	background-image: url(../assets/images/banner-fairfax-city.avif);
+	background-position: center;
+	background-size: cover;
+	height: 50%;
+}
+
+.falls-church-background {
+	background-image: url(../assets/images/banner-falls-church.webp);
+	background-position: center;
+	background-size: cover;
+	height: 50%;
+}
+
+.newport-news-background {
+	background-image: url(../assets/images/banner-newport-news.avif);
+	background-position: center;
+	background-size: cover;
+	height: 50%;
+}
+
+/* footer styles ***************************/
 footer {
 	display: flex;
 	justify-content: center;

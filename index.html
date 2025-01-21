@@ -3,9 +3,9 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>VA Mapping</title>
-	<link rel="stylesheet" type="text/css" href="./src/css/style.css">
 	<link href="https://api.mapbox.com/mapbox-gl-js/v3.9.2/mapbox-gl.css" rel="stylesheet">
 	<script src="https://api.mapbox.com/mapbox-gl-js/v3.9.2/mapbox-gl.js"></script>
+	<link rel="stylesheet" type="text/css" href="./src/css/style.css">
 </head>
 <body>
 	<div class="map-container">
@@ -25,29 +25,69 @@
 		});
 
 		map.on('click', 'usa-counties', (e) => {
-			const coordinates = e.features[0].geometry.coordinates.slice()[0][0];
-			const county = e.features[0].properties.NAME;
+			let coordinates = e.features[0].geometry.coordinates.slice()[0][0];
+			let county = e.features[0].properties.NAME;
+			let countyDescription = e.features[0].properties.DESCRIPTION;
+			let countyURL = e.features[0].properties.URL;
 			// console.log(coordinates)
+			// console.log(county);
 			// console.log(e.features)
+			// console.log('coordinates length is: ' + e.features[0].geometry.coordinates.length)
+			// console.log('coordinates variables length is: ' + coordinates.length)
 			// console.log(e.features[0].geometry.coordinates.slice()[0][0]);
 			// console.log(e.features[0].properties.COUNTYFP);
 			// console.log(e.features[0].properties.NAME);
+			if (coordinates.length > 2) {
+				coordinates = coordinates[0]; // Chesterfield County has added layer of nested arrays
+			}
+
+			var countyIcon = county.replace(" ", "-");  // Replace spacing with hyphens
+			if (countyDescription == undefined) {
+				countyDescription = "Not currently endorsing ranked choice voting";
+			}
+
+			let image_height, image_width = '20px';
+			fetch(`./src/assets/icons/${countyIcon}-icon.png`).then((res) => {
+					if(!res.ok) {
+						return fetch(`./src/assets/icons/RCVa-favicon.png`).then((res) => {
+							image_height = '0';
+							image_width = '0';
+							return res.blob();
+						})
+					}
+					return res.blob();
+				}).then(blob => {
+					var img = URL.createObjectURL(blob);
+
+					new mapboxgl.Popup()
+						.setLngLat(coordinates)
+						.setHTML(`<div class="popup">
+									<div class="default-background ${countyIcon}-background"></div>
+									<a href="${countyURL}" class="county-header-container">
+										<img src="${img}" alt="${county} icon" height=${image_height} width=${image_width}>
+										<h2 class="county-header">${county}</h2>
+										<img src="./src/assets/icons/arrow-right-blue.svg" alt="right arrow" height=${image_height} width=${image_width}>
+									</a>
+									<p class="county-info">
+										${countyDescription}.
+									</p>
+								</div>`)
+						.addTo(map);
+
+			}).catch(err => {
+				console.error('Request failed', err);
+			});
 
 			// Ensure that if the map is zoomed out such that multiple
-            // copies of the feature are visible, the popup appears
-            // over the copy being pointed to.
-            if (['mercator', 'equirectangular'].includes(map.getProjection().name)) {
-                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-                }
-            }
+			// copies of the feature are visible, the popup appears
+			// over the copy being pointed to.
+			if (['mercator', 'equirectangular'].includes(map.getProjection().name)) {
+				while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+					coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+				}
+			}
 
-			new mapboxgl.Popup()
-				.setLngLat(coordinates)
-				.setHTML(`<h3>${county}</h3>`)
-				.addTo(map);
-
-		})
+		}); // map.onClick();
 
 		let hoveredPolygonId = null;
 
@@ -71,7 +111,7 @@
 					'fill-color': [
 						'case',
 						['boolean', ['feature-state', 'hover'], false],
-						'#627BC1',
+						'#464b6b',
 						'transparent'
 					],
 					'fill-opacity': [
@@ -84,9 +124,9 @@
 			});
 	
 			map.on('mousemove', 'usa-counties-filler', (e) => {
-				console.log('on mouse move the features are: ');
-				console.log(e.features);
-				console.log('and the features length is: ' + e.features.length);
+				// console.log('on mouse move the features are: ');
+				// console.log(e.features);
+				// console.log('and the features length is: ' + e.features.length);
 				if (e.features.length > 0) {
 					if (hoveredPolygonId !== null) {
 						map.setFeatureState(
