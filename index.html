@@ -20,8 +20,8 @@
 			// style: "mapbox://styles/rankedchoiceva/cm5yo1v4g003a01qzaril9y48/draft",
 			style: "mapbox://styles/rankedchoiceva/cm5yo1v4g003a01qzaril9y48",
 			center: [-79.50798, 38.033554], // starting position [lng, lat]. Note that lat must be set between -90 and 90
+			minZoom: 6,
 			zoom: 6.1 // starting zoom
-			
 		});
 
 		map.on('click', 'usa-counties', (e) => {
@@ -48,8 +48,6 @@
 			if (countyURL == undefined) {
 				countyURL = "#";
 			}
-
-
 
 			let image_height, image_width = '20px';
 			fetch(`./src/assets/icons/${countyIcon}-icon.png`).then((res) => {
