@@ -1,61 +1,4 @@
-.map-container {
-	display: flex;
-	justify-content: center;
-	padding-top: 50px;
-}
-#map { 
-	height: 500px;
-	width: 960px; 
-	
-}
-/* mapbox popup styles **************************/
-.mapboxgl-popup-content {
-	border: 1px solid;
-	padding: 0;
-	width: 300px;
-}
-
-.mapboxgl-popup-close-button {
-	color: #fff;
-}
-
-.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
-	border-top-color: #000;
-}
-
-.popup {
-	display: flex;
-	flex-direction: column;
-	height: 200px;
-	text-align: center;
-	width: 300px;
-	
-}
-
-a.county-header-container {
-	align-items: center;
-	display: flex;
-	flex-direction: row;
-	font-family: "Manrope", serif;
-	gap: 10px;
-	justify-content: center;
-}
-
-h2.county-header {
-	color: #464b6b;
-	font-size: 20px;
-}
-
-p.county-info {
-	font-family: "Manrope", serif;
-	font-optical-sizing: auto;
-	font-size: 14px;
-	font-style: normal;
-	margin: 0 10% 5%;
-	text-align: left;
-}
-
-/* card background **************************/
+/* card backgrounds **************************/
 
 .default-background {
 	background-color: #ddd;
@@ -102,6 +45,116 @@ p.county-info {
 	background-position: center;
 	background-size: cover;
 	height: 50%;
+}
+
+/* containers **************************/
+.map-container {
+	display: flex;
+	justify-content: center;
+	padding-top: 50px;
+	position: relative;
+}
+#map { 
+	height: 500px;
+	width: 960px; 
+	
+}
+
+/* colors **************************/
+.bg-red {
+	background-color: #e05752;
+}
+.bg-blue {
+	background-color: #464b6b;
+}
+.bg-grey {
+	background-color: #faf5f5;
+}
+
+/* mapbox legend **************************/
+.legend {
+	background-color: #fff;
+	border-radius: 3px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+	display: flex;
+	flex-direction: column;
+	font:
+		12px/20px 'Helvetica Neue',
+		Arial,
+		Helvetica,
+		sans-serif;
+	gap: 10px;
+	padding: 10px;
+	position: absolute;
+	left: 10px;
+	top: 10px;
+	z-index: 1;
+}
+
+.legend .item {
+	align-items: center;
+	color: rgb(79, 92, 96);
+	display: flex;
+	font-size: 14px;
+	font-weight: 700;
+	gap: 10px;
+	
+}
+
+.legend div span {
+	border: 1px solid #333;
+	border-radius: 50%;
+	display: inline-block;
+	height: 30px;
+	margin-right: 5px;
+	width: 30px;
+}
+
+/* mapbox popup styles **************************/
+.mapboxgl-popup-content {
+	border: 1px solid;
+	padding: 0;
+	width: 300px;
+}
+
+.mapboxgl-popup-close-button {
+	color: #fff;
+}
+
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+	border-top-color: #000;
+}
+
+.popup {
+	display: flex;
+	flex-direction: column;
+	height: 200px;
+	text-align: center;
+	width: 300px;
+	
+}
+
+a.county-header-container {
+	align-items: center;
+	display: flex;
+	flex-direction: row;
+	font-family: "Manrope", serif;
+	gap: 10px;
+	justify-content: center;
+}
+
+h2.county-header {
+	color: #464b6b;
+	font-size: 20px;
+}
+
+p.county-info {
+	font-family: "Manrope", serif;
+	font-optical-sizing: auto;
+	font-size: 14px;
+	font-style: normal;
+	margin: 0 10% 5%;
+	text-align: left;
 }
 
 /* footer styles ***************************/

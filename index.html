@@ -8,8 +8,14 @@
 	<link rel="stylesheet" type="text/css" href="./src/css/style.css">
 </head>
 <body>
+
 	<div class="map-container">
-		<div id="map"></div>
+		<div id="map">
+			<div class="legend">
+				<div class="item"><span class="bg-red"></span>Endorsing ranked choice voting</div>
+				<div class="item"><span class="bg-grey"></span>Not endorsing ranked choice voting</div>
+			</div>
+		</div>
 	</div>
 
 	<script type="module" src="./src/js/script.js" async></script>
@@ -29,6 +35,7 @@
 			let county = e.features[0].properties.NAME;
 			let countyDescription = e.features[0].properties.DESCRIPTION;
 			let countyURL = e.features[0].properties.URL;
+			var countyIcon = county.replace(" ", "-").toLowerCase();  // Replace spacing with hyphens
 			// console.log(coordinates)
 			// console.log(county);
 			// console.log(e.features)
@@ -40,8 +47,7 @@
 			if (coordinates.length > 2) {
 				coordinates = coordinates[0]; // Chesterfield County has added layer of nested arrays
 			}
-
-			var countyIcon = county.replace(" ", "-").toLowerCase();  // Replace spacing with hyphens
+			
 			if (countyDescription == undefined) {
 				countyDescription = "Not currently endorsing ranked choice voting";
 			}
