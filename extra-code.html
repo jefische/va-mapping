@@ -1,0 +1,343 @@
+<div class="map-container">
+	<div id="map2">
+		<div class="legend">
+			<div class="item"><span class="bg-red"></span>Endorsing ranked choice voting</div>
+			<div class="item"><span class="bg-grey"></span>Not endorsing ranked choice voting</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoicmFua2VkY2hvaWNldmEiLCJhIjoiY201eTB3azNzMGZ0OTJrcTFrb2RoMzc1biJ9.ZbYa1MZw4vKjs8UIN8T-Qw';
+	const map2 = new mapboxgl.Map({
+		container: 'map2', // container ID
+		// style: "mapbox://styles/rankedchoiceva/cm5yo1v4g003a01qzaril9y48/draft",
+		style: "mapbox://styles/rankedchoiceva/cm6s5ukk4002q01s124q4grve",
+		center: [-79.50798, 38.033554], // starting position [lng, lat]. Note that lat must be set between -90 and 90
+		minZoom: 6,
+		zoom: 6.1 // starting zoom
+	});
+
+	map2.on('click', 'usa-counties', (e) => {
+		let coordinates = e.features[0].geometry.coordinates.slice()[0][0];
+		let county = e.features[0].properties.NAME;
+		let countyDescription = e.features[0].properties.DESCRIPTION;
+		let countyURL = e.features[0].properties.URL;
+		var countyIcon = county.replace(" ", "-").toLowerCase();  // Replace spacing with hyphens
+		// console.log(coordinates)
+		// console.log(county);
+		// console.log(e.features)
+		// console.log('coordinates length is: ' + e.features[0].geometry.coordinates.length)
+		// console.log('coordinates variables length is: ' + coordinates.length)
+		// console.log(e.features[0].geometry.coordinates.slice()[0][0]);
+		// console.log(e.features[0].properties.COUNTYFP);
+		// console.log(e.features[0].properties.NAME);
+		if (coordinates.length > 2) {
+			coordinates = coordinates[0]; // Chesterfield County has added layer of nested arrays
+		}
+		
+		if (countyDescription == undefined) {
+			countyDescription = "Not currently endorsing ranked choice voting";
+		}
+		if (countyURL == undefined) {
+			countyURL = "#";
+		}
+
+		let image_height, image_width = '20px';
+		fetch(`./src/assets/icons/${countyIcon}-icon.png`).then((res) => {
+				if(!res.ok) {
+					return fetch(`./src/assets/icons/RCVa-favicon.png`).then((res) => {
+						image_height = '0';
+						image_width = '0';
+						return res.blob();
+					})
+				}
+				return res.blob();
+			}).then(blob => {
+				var img = URL.createObjectURL(blob);
+
+				new mapboxgl.Popup()
+					.setLngLat(coordinates)
+					.setHTML(`<div class="popup">
+								<div class="default-background ${countyIcon}-background"></div>
+								<a href="${countyURL}" class="county-header-container">
+									<img src="${img}" alt="${county} icon" height=${image_height} width=${image_width}>
+									<h2 class="county-header">${county}</h2>
+									<img src="./src/assets/icons/arrow-right-blue.svg" alt="right arrow" height=${image_height} width=${image_width}>
+								</a>
+								<p class="county-info">
+									${countyDescription}.
+								</p>
+							</div>`)
+					.addTo(map);
+
+		}).catch(err => {
+			console.error('Request failed', err);
+		});
+
+		// Ensure that if the map is zoomed out such that multiple
+		// copies of the feature are visible, the popup appears
+		// over the copy being pointed to.
+		if (['mercator', 'equirectangular'].includes(map.getProjection().name)) {
+			while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+				coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+			}
+		}
+
+	}); // map.onClick();
+
+	let hoveredPolygonId2 = null;
+
+	map2.on('load', () => {
+		map.addSource('usa_counties-b2oig3', {
+			type: 'vector',
+			url: 'mapbox://rankedchoiceva.3tdpwa61',
+			promoteId: 'AFFGEOID'
+		});
+
+		// The feature-state dependent fill-opacity expression will render the hover effect
+		// when a feature's hover state is set to true.
+		map2.addLayer({
+			'id': 'usa-counties-filler',
+			'type': 'fill',
+			'source': 'usa_counties-b2oig3',
+			'layout': {},
+			'source-layer': 'usa_counties-b2oig3',
+			'filter': ['==', 'STATEFP', '51'],
+			'paint': {
+				'fill-color': [
+					'case',
+					['boolean', ['feature-state', 'hover'], false],
+					'#464b6b',
+					'transparent'
+				],
+				'fill-opacity': [
+					'case',
+					['boolean', ['feature-state', 'hover'], false],
+					1,
+					0.5
+				]
+			}
+		});
+
+		map2.on('mousemove', 'usa-counties-filler', (e) => {
+			// console.log('on mouse move the features are: ');
+			// console.log(e.features);
+			// console.log('and the features length is: ' + e.features.length);
+			if (e.features.length > 0) {
+				if (hoveredPolygonId !== null) {
+					map.setFeatureState(
+						{ source: 'usa_counties-b2oig3', sourceLayer: 'usa_counties-b2oig3', id: hoveredPolygonId2 },
+						{ hover: false }
+					);
+				}
+				hoveredPolygonId2 = e.features[0].id;
+				map.setFeatureState(
+					{ source: 'usa_counties-b2oig3', sourceLayer: 'usa_counties-b2oig3', id: hoveredPolygonId2 },
+					{ hover: true }
+				);
+			}
+		});
+
+		// When the mouse leaves the state-fill layer, update the feature state of the
+		// previously hovered feature.
+		map2.on('mouseleave', 'usa-counties-filler', () => {
+			if (hoveredPolygonId2 !== null) {
+				map.setFeatureState(
+					{ source: 'usa_counties-b2oig3', sourceLayer: 'usa_counties-b2oig3', id: hoveredPolygonId2 },
+					{ hover: false }
+				);
+			}
+			hoveredPolygonId2 = null;
+		});
+	})
+
+	// Webflow image cdn URLS from Image CMS Collection
+	let cville_banner_cdn = "https://cdn.prod.website-files.com/67aa5d1a54d128d05b926c1d/67aa5d1a54d128d05b926e31_banner-charlottesville.avif";
+
+	let cville_banner = "67aa5d1b54d128d05b926faf";
+
+	let cville_icon_blue_cdn = "https://cdn.prod.website-files.com/67aa5d1a54d128d05b926c1d/67aa5d1b54d128d05b926f6b_icon-charlottesville-blue.avif";
+
+	let cville_icon_blue = "67aa5d1b54d128d05b926f2e"
+
+	// Localities CMS Collection - Item IDs
+
+	// 67aa5d1a54d128d05b926c28 - Charlottesville
+
+	// 67aa5d1a54d128d05b926c24 - Arlington
+
+</script>
+
+<!-- From Webflow example: https://webflow.com/made-in-webflow/website/mapstore -->
+
+<style>
+
+	.mapboxgl-popup-content {
+		color: steelblue;
+		FONT-SIZE: larger;
+		padding: 0px 0px 15px !important;
+		border-radius: 4px;
+		overflow: auto;
+		box-shadow: 0px 0px 4px 4px #cccccc50;
+	}
+
+	.detail-popup{
+		margin-left: 0.5em;
+		font-size: 12px;
+		color: darkgrey;
+	}
+	
+	.detail-hot{
+		margin-left: 0.5em;
+	}
+	
+	.mapboxgl-popup-content > p {
+		color: #1f384d;
+		font-size: 14px;
+		line-height: 24px;
+		margin-left: 0.5em;
+	}
+		
+	.star{
+		background-image: url('https://uploads-ssl.webflow.com/630f25e530b99b5de2d4ee66/632ef299c5e7a67bf776fca7_map.svg');
+		background-size: cover;
+		width: 50px;
+		height: 50px;
+		border-radius: 50%;
+		cursor: pointer;
+	}
+	
+	.star.show{
+		background-image: url('https://uploads-ssl.webflow.com/630f25e530b99b5de2d4ee66/632ef32efc80c81d44fe73be_map3.svg');
+		background-size: cover;
+		width: 50px;
+		height: 50px;
+		border-radius: 50%;
+		cursor: pointer;
+	}
+
+	.location.active{
+		background-color: #dfd7d0b3;
+	}
+	
+</style>
+
+<script>
+	const monument=[12.65147, 55.608166];
+	mapboxgl.accessToken = 'pk.eyJ1IjoiaHVyc3RlbGNsZW1lbnQiLCJhIjoiY2w4ZW80ZGRqMDl6ZDN4bnprOTJ3d3d5YSJ9.Qmhfa2IfhZR8waS3Ixwaww';
+	var map = new mapboxgl.Map(
+		{container:'map',
+		style : 'mapbox://styles/hurstelclement/cl8fontw000k614ntg9zj2q74',
+		center: monument,
+		zoom:8,
+		projection : 'globe' });
+  
+	
+	var current_popup, current_marker, current_item;
+
+	$(".location").each(function (index) {
+		let cmsItem = $(this);
+		let img = cmsItem.find(".location-profile").css("background-image").slice(4, -1).replace(/["']/g, "");
+		let name = cmsItem.find(".location-name").text();
+		let lat = cmsItem.find(".lat").text();
+		let lon = cmsItem.find(".lon").text();
+		let detail1 = cmsItem.find(".popup-detail").text();
+		let detail2 = cmsItem.find(".popup-detail-2").text();
+		let pop = this.popup;
+	
+		let el = document.createElement('div');
+		el.classList.add('star');
+		let body = cmsItem.find(".pre-popup");
+	
+		pop = new mapboxgl.Popup({
+			offset: 25,
+			closeButton: false,
+			maxWidth: "auto" 
+		})
+		.setHTML(body[0].outerHTML);
+	
+		let mark = this.marker;
+		mark = new mapboxgl.Marker(el)
+		.setLngLat([lon, lat])
+		.setPopup(pop)
+		.addTo(map)
+
+		map.on('click', (e) =>{
+			if(e.originalEvent.srcElement.ariaLabel==="Map"){
+				current_marker.classList.remove('show');
+			};
+		});
+
+		//MARKERS EVENT
+
+		el.addEventListener('click', () => {
+			pop.addTo(map)// show popup
+			if(current_marker!=undefined){
+				current_item.classList.remove('active');
+				current_marker.classList.remove('show')// we also come back to the original marker's image for the previous active marker
+				pop.remove() // remove the previous active popup if it's existing
+			}
+			current_item=this;
+			current_item.classList.add('active');
+			current_marker=el; // set the current popup active
+			current_marker.classList.add('show'); // add class to marker to change the image
+			map.flyTo({center: [lon, lat],
+				zoom:8,
+				essential: true // this animation is considered essential with respect to prefers-reduced-motion
+				});
+		}); 
+
+		el.addEventListener('mouseover', () => {
+			pop.addTo(map)// show popup
+			el.classList.add('show'); // add class show to manage the marker's image
+		});
+	
+		el.addEventListener('mouseout', () => {
+			if(current_marker!==el){   
+				pop.remove();
+				el.classList.remove('show'); // we also come back to the original marker's image
+				}
+		});
+
+
+	//LIST ITEMS EVENT
+
+		this.addEventListener('click', () => {
+
+			map.flyTo({
+				center: [lon, lat],
+				zoom: 8,
+				essential: true // this animation is considered essential with respect to prefers-reduced-motion
+			})
+	
+			if(current_marker!=undefined){
+				current_item.classList.remove('active');
+				current_marker.classList.remove('show')// we also come back to the original marker's image for the previous active marker
+				current_popup.remove() // remove the previous active popup if it's existing
+			}
+
+			pop.addTo(map); // toggle popup open or closed
+			el.classList.add('show');
+			current_marker=el;
+			current_popup=pop;
+			current_item=this;
+			current_item.classList.add('active');
+
+		});
+
+		this.addEventListener('mouseover', () => {
+			pop.addTo(map)// toggle popup open or closed
+			el.classList.add('show');
+		});
+	
+		this.addEventListener('mouseout', () => {
+			// toggle popup open or closed
+			if(current_marker!==el){
+				pop.remove()
+				el.classList.remove('show');
+			}
+		});
+	
+	}) // ($.location).each()
+</script>

@@ -9,6 +9,20 @@
 </head>
 <body>
 
+	<style>
+		.background-grey {
+			background-color: grey;
+		}
+		.background-navy {
+			background-color: navy;
+		}
+		.popup-image {
+			border: 1px solid;
+			height: 200px;
+			width: 300px;
+		}
+	</style>
+
 	<div class="map-container">
 		<div id="map">
 			<div class="legend">
@@ -16,6 +30,38 @@
 				<div class="item"><span class="bg-grey"></span>Not endorsing ranked choice voting</div>
 			</div>
 		</div>
+	</div>
+
+	<div id="va-county-data">
+		<div class="rcva-location" data-name="Charlottesville" data-description="The greatest city">
+
+			<div class="popup-hidden">
+
+				<div class="popup-image"></div>
+				<div class="popup-header">
+					Charlottesville
+				</div>
+				<div class="popup-body">
+					Welcome to Charlottesville
+				</div>
+
+			</div>
+
+		</div>
+		<div class="rcva-location" data-name="Arlington" data-description="The greatest of all cities">
+			<div class="popup-hidden">
+
+				<div class="popup-image"></div>
+				<div class="popup-header">
+					Arlington County
+				</div>
+				<div class="popup-body">
+					Welcome to Arlington
+				</div>
+				
+			</div>
+		</div>
+
 	</div>
 
 	<script type="module" src="./src/js/script.js" async></script>
@@ -54,6 +100,7 @@
 			if (countyURL == undefined) {
 				countyURL = "#";
 			}
+
 
 			let image_height, image_width = '20px';
 			fetch(`./src/assets/icons/${countyIcon}-icon.png`).then((res) => {
@@ -99,11 +146,11 @@
 		}); // map.onClick();
 
 		let hoveredPolygonId = null;
-
+		
 		map.on('load', () => {
-			map.addSource('usa_counties-b2oig3', {
+			map.addSource('counties-59v8uh', {
 				type: 'vector',
-				url: 'mapbox://rankedchoiceva.3tdpwa61',
+				url: 'mapbox://rankedchoiceva.ahntv1l5',
 				promoteId: 'AFFGEOID'
 			});
 
@@ -112,9 +159,9 @@
 			map.addLayer({
 				'id': 'usa-counties-filler',
 				'type': 'fill',
-				'source': 'usa_counties-b2oig3',
+				'source': 'counties-59v8uh',
 				'layout': {},
-				'source-layer': 'usa_counties-b2oig3',
+				'source-layer': 'counties-59v8uh',
 				'filter': ['==', 'STATEFP', '51'],
 				'paint': {
 					'fill-color': [
@@ -131,6 +178,25 @@
 					]
 				}
 			});
+
+			let myName = 'Fairfax City';
+			map.addLayer({
+				'id': 'Fairfax City',
+				'type': 'fill',
+				'source': 'counties-59v8uh',
+				'source-layer': 'counties-59v8uh',
+				'filter': ['all',
+					['==', 'NAME', 'Fairfax City'],
+					// ['==', 'AFFGEOID', '0500000US51600'],
+					
+				],
+				'layout': {},
+				'paint': {
+					'fill-color': '#e05752',
+					'fill-opacity': 1,
+					'fill-outline-color': '#000'
+				}
+			});
 	
 			map.on('mousemove', 'usa-counties-filler', (e) => {
 				// console.log('on mouse move the features are: ');
@@ -139,13 +205,13 @@
 				if (e.features.length > 0) {
 					if (hoveredPolygonId !== null) {
 						map.setFeatureState(
-							{ source: 'usa_counties-b2oig3', sourceLayer: 'usa_counties-b2oig3', id: hoveredPolygonId },
+							{ source: 'counties-59v8uh', sourceLayer: 'counties-59v8uh', id: hoveredPolygonId },
 							{ hover: false }
 						);
 					}
 					hoveredPolygonId = e.features[0].id;
 					map.setFeatureState(
-						{ source: 'usa_counties-b2oig3', sourceLayer: 'usa_counties-b2oig3', id: hoveredPolygonId },
+						{ source: 'counties-59v8uh', sourceLayer: 'counties-59v8uh', id: hoveredPolygonId },
 						{ hover: true }
 					);
 				}
@@ -156,7 +222,7 @@
 			map.on('mouseleave', 'usa-counties-filler', () => {
 				if (hoveredPolygonId !== null) {
 					map.setFeatureState(
-						{ source: 'usa_counties-b2oig3', sourceLayer: 'usa_counties-b2oig3', id: hoveredPolygonId },
+						{ source: 'counties-59v8uh', sourceLayer: 'counties-59v8uh', id: hoveredPolygonId },
 						{ hover: false }
 					);
 				}
