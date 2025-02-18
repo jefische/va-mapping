@@ -24,7 +24,7 @@ const getLocationData = () => {
 		const body = element.children[0];
 		
 		// console.log(test);
-		console.log(body.outerHTML);
+		// console.log(body.outerHTML);
 		locations.push({name, description, body});
 	});
 	return locations;

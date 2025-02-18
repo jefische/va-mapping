@@ -55,8 +55,9 @@
 	position: relative;
 }
 #map, #map2 { 
-	height: 700px;
-	width: 80%; 
+	border: 1px solid;
+	height: 600px;
+	width: 60%; 
 	
 }
 

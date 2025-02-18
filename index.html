@@ -21,18 +21,34 @@
 			height: 200px;
 			width: 300px;
 		}
+		.mapboxgl-marker {
+			cursor: pointer;
+		}
+		.marker {
+			background-size: cover;
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+		}
+
+		.cards-container {
+			display: flex;
+			gap: 20px;
+			justify-content: center;
+			margin-top: 50px;
+		}
 	</style>
 
 	<div class="map-container">
 		<div id="map">
-			<div class="legend">
+			<!-- <div class="legend">
 				<div class="item"><span class="bg-red"></span>Endorsing ranked choice voting</div>
 				<div class="item"><span class="bg-grey"></span>Not endorsing ranked choice voting</div>
-			</div>
+			</div> -->
 		</div>
 	</div>
 
-	<div id="va-county-data">
+	<div id="va-county-data" class="cards-container" style="display: none;">
 		<div class="rcva-location" data-name="Charlottesville" data-description="The greatest city">
 
 			<div class="popup-hidden">
@@ -61,20 +77,69 @@
 				
 			</div>
 		</div>
-
 	</div>
 
 	<script type="module" src="./src/js/script.js" async></script>
 	<script>
 		mapboxgl.accessToken = 'pk.eyJ1IjoicmFua2VkY2hvaWNldmEiLCJhIjoiY201eTB3azNzMGZ0OTJrcTFrb2RoMzc1biJ9.ZbYa1MZw4vKjs8UIN8T-Qw';
+		
+		const bounds = [
+			[], // Southwest coordinates
+			[] // Northeast coordinates
+		];
+
 		const map = new mapboxgl.Map({
 			container: 'map', // container ID
 			// style: "mapbox://styles/rankedchoiceva/cm5yo1v4g003a01qzaril9y48/draft",
-			style: "mapbox://styles/rankedchoiceva/cm5yo1v4g003a01qzaril9y48",
+			// style: "mapbox://styles/rankedchoiceva/cm5yo1v4g003a01qzaril9y48", // original map shared with Sally
+			style: "mapbox://styles/rankedchoiceva/cm7ap94ap004y01s61xh6gvha", // VA shapefile map
 			center: [-79.50798, 38.033554], // starting position [lng, lat]. Note that lat must be set between -90 and 90
-			minZoom: 6,
+			// minZoom: 6,
+			// maxZoom: 6,
 			zoom: 6.1 // starting zoom
 		});
+
+		map.scrollZoom.disable();
+
+		const geojson = {
+			"type": "FeatureCollection",
+			"name": "Virginia Localities",
+			"features": [
+				{
+					"type": "Feature",
+					"properties": {
+						"name": "Albemarle"
+					},
+					"geometry": {
+						"type": "Point",
+						"coordinates": [-78.47978, 38.03649]
+					}
+				},
+				{
+					"type": "Feature",
+					"properties": {
+						"name": "Arlington"
+					},
+					"geometry": {
+						"type": "Point",
+						"coordinates": [-77.10596, 38.88371]
+					}
+				},
+			]
+		}
+
+		// add markers to map
+		for (const feature of geojson.features) {
+			// create a HTML element for each feature
+			const el = document.createElement('div');
+			el.textContent = 'Charlottesville';
+			let popup = new mapboxgl.Popup().setText('Charlottesville').addTo(map);
+
+			// make a marker for each feature and add it to the map
+			new mapboxgl.Marker()
+				.setLngLat(feature.geometry.coordinates)
+				.addTo(map);
+		}
 
 		map.on('click', 'usa-counties', (e) => {
 			let coordinates = e.features[0].geometry.coordinates.slice()[0][0];
@@ -179,24 +244,24 @@
 				}
 			});
 
-			let myName = 'Fairfax City';
-			map.addLayer({
-				'id': 'Fairfax City',
-				'type': 'fill',
-				'source': 'counties-59v8uh',
-				'source-layer': 'counties-59v8uh',
-				'filter': ['all',
-					['==', 'NAME', 'Fairfax City'],
-					// ['==', 'AFFGEOID', '0500000US51600'],
+			// let myName = 'Fairfax City';
+			// map.addLayer({
+			// 	'id': 'Fairfax City',
+			// 	'type': 'fill',
+			// 	'source': 'counties-59v8uh',
+			// 	'source-layer': 'counties-59v8uh',
+			// 	'filter': ['all',
+			// 		['==', 'NAME', 'Fairfax City'],
+			// 		// ['==', 'AFFGEOID', '0500000US51600'],
 					
-				],
-				'layout': {},
-				'paint': {
-					'fill-color': '#e05752',
-					'fill-opacity': 1,
-					'fill-outline-color': '#000'
-				}
-			});
+			// 	],
+			// 	'layout': {},
+			// 	'paint': {
+			// 		'fill-color': '#e05752',
+			// 		'fill-opacity': 1,
+			// 		'fill-outline-color': '#000'
+			// 	}
+			// });
 	
 			map.on('mousemove', 'usa-counties-filler', (e) => {
 				// console.log('on mouse move the features are: ');
