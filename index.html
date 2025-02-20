@@ -258,12 +258,12 @@
 			marker.setPopup(popup).addTo(map);
 			
 			let marker_label = new mapboxgl.Marker(label, {draggable: true})
-				.setLngLat(labelShift(feature.geometry.coordinates, feature.geometry.labelAdjustment))
+				.setLngLat(feature.geometry.coordinatesLabel)
 				.addTo(map);
 
 			function onDragEndLabel() {
 				const coordinates_label = document.getElementById(`coordinates_label-${feature.properties.name.replace(' ', '-').toLowerCase()}`);
-				const lngLat = marker.getLngLat();
+				const lngLat = marker_label.getLngLat();
 				coordinates_label.style.display = 'block';
 				coordinates_label.innerHTML = `<h3>${feature.properties.name} Label</h3>Longitude: ${lngLat.lng}<br>Latitude: ${lngLat.lat}`;
 			}

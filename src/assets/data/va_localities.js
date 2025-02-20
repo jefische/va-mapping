@@ -7,13 +7,11 @@ export default {
 			"properties": {
 				"name": "Albemarle",
 				"rcv": "adopted",
-				// "placement": "right",
-				// "isCounty": "county"
 			},
 			"geometry": {
 				"type": "Point",
 				"coordinates": [-78.65503, 38.16004],
-				"labelAdjustment": [0, 0]
+				"coordinatesLabel": [-78.9767627049521, 38.19077995370188]
 			}
 		},
 		{
@@ -21,13 +19,11 @@ export default {
 			"properties": {
 				"name": "Arlington",
 				"rcv": "adopted",
-				// "placement": "left",
-				// "isCounty": "county"
 			},
 			"geometry": {
 				"type": "Point",
 				"coordinates": [-77.10596, 38.88371],
-				"labelAdjustment": [0, 0]
+				"coordinatesLabel": [-76.72882365813479, 38.97177667987884]
 			}
 		},
 		{
@@ -35,13 +31,11 @@ export default {
 			"properties": {
 				"name": "Charlottesville",
 				"rcv": "adopted",
-				// "placement": "top",
-				// "isCounty": "city"
 			},
 			"geometry": {
 				"type": "Point",
 				"coordinates": [-78.47978, 38.03649],
-				"labelAdjustment": [0, 0]
+				"coordinatesLabel": [-78.47978, 38.03649]
 			}
 		},
 		{
@@ -49,14 +43,11 @@ export default {
 			"properties": {
 				"name": "Fairfax City",
 				"rcv": "adopted",
-				// "placement": "right",
-				// "isCounty": "city"
 			},
 			"geometry": {
 				"type": "Point",
 				"coordinates": [-77.29912, 38.85328],
-				"labelAdjustment": [0, 0]
-				// "coordinates": [-77.49912, 38.85328]
+				"coordinatesLabel": [-77.66109405747127, 38.881116643176114]
 			}
 		},
 		{
@@ -64,13 +55,11 @@ export default {
 			"properties": {
 				"name": "Falls Church",
 				"rcv": "adopted",
-				// "placement": "top",
-				// "isCounty": "county"
 			},
 			"geometry": {
 				"type": "Point",
 				"coordinates": [-77.17613, 38.88623],
-				"labelAdjustment": [0, 0]
+				"coordinatesLabel": [-76.91196040224813, 39.28814494013028]
 			}
 		},
 		{
@@ -78,14 +67,12 @@ export default {
 			"properties": {
 				"name": "Loudoun",
 				"rcv": "considering",
-				// "placement": "right",
-				// "isCounty": "county"
 			},
 			"geometry": {
 				"type": "Point",
-				"coordinates": [-77.60887, 39.06769],
-				"labelAdjustment": [0, 0],
-				// "coordinates": [-77.65887, 39.18869],
+				// "coordinates": [-77.60887, 39.06769],
+				"coordinates": [-77.65287616332687, 39.19155064846973],
+				"coordinatesLabel": [-77.58629030107156, 39.590322728996966]
 			}
 		},
 		{
@@ -93,13 +80,11 @@ export default {
 			"properties": {
 				"name": "Newport News",
 				"rcv": "used",
-				// "placement": "top",
-				// "isCounty": "county"
 			},
 			"geometry": {
 				"type": "Point",
 				"coordinates": [-76.49012, 37.08452],
-				"labelAdjustment": [0, 0]
+				"coordinatesLabel": [-76.9366938004075, 37.50028750599455]
 			}
 		},
 	]
