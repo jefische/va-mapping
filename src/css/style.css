@@ -54,6 +54,8 @@
 	padding-top: 50px;
 	position: relative;
 }
+
+/* VA fill color is currently: #944242 */
 #map, #map2 { 
 	border: 1px solid;
 	height: 600px;
@@ -129,11 +131,11 @@
 }
 
 .popup {
-	display: flex;
+	/* display: flex;
 	flex-direction: column;
 	height: 200px;
 	text-align: center;
-	width: 300px;
+	width: 300px; */
 	
 }
 
