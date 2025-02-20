@@ -57,6 +57,7 @@
 #map, #map2 { 
 	border: 1px solid;
 	height: 600px;
+	transform-box: border-box;
 	width: 60%; 
 	
 }
@@ -103,23 +104,24 @@
 }
 
 .legend div span {
-	border: 1px solid #333;
+	/* border: 1px solid #333;
 	border-radius: 50%;
 	display: inline-block;
 	height: 30px;
 	margin-right: 5px;
-	width: 30px;
+	width: 30px; */
 }
 
-/* mapbox popup styles **************************/
+/* mapbox popup styles for cards with backgrounds **************************/
 .mapboxgl-popup-content {
 	border: 1px solid;
-	padding: 0;
-	width: 300px;
+	/* padding: 0; */
+	/* width: 300px; */
 }
 
 .mapboxgl-popup-close-button {
-	color: #fff;
+	/* color: #fff; */
+	display: none;
 }
 
 .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
