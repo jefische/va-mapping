@@ -220,8 +220,63 @@
 	.location.active{
 		background-color: #dfd7d0b3;
 	}
+
+	.background-grey {
+		background-color: grey;
+	}
+	.background-navy {
+		background-color: navy;
+	}
+	.popup-image {
+		border: 1px solid;
+		height: 200px;
+		width: 300px;
+	}
+
+	.cards-container {
+		display: flex;
+		gap: 20px;
+		justify-content: center;
+		margin-top: 50px;
+	}
 	
 </style>
+
+<div id="va-county-data" class="cards-container" style="display: none;">
+	<div class="rcva-location" data-name="Charlottesville" data-description="The greatest city">
+
+		<div class="popup-hidden">
+
+			<div class="popup-image"></div>
+			<div class="popup-header">
+				Charlottesville
+			</div>
+			<div class="popup-body">
+				Welcome to Charlottesville
+			</div>
+
+		</div>
+
+	</div>
+	<div class="rcva-location" data-name="Arlington" data-description="The greatest of all cities">
+		<div class="popup-hidden">
+
+			<div class="popup-image"></div>
+			<div class="popup-header">
+				Arlington County
+			</div>
+			<div class="popup-body">
+				Welcome to Arlington
+			</div>
+			
+		</div>
+	</div>
+</div>
+
+<div class="legend">
+	<div class="item"><span class="bg-red"></span>Endorsing ranked choice voting</div>
+	<div class="item"><span class="bg-grey"></span>Not endorsing ranked choice voting</div>
+</div>
 
 <script>
 	const monument=[12.65147, 55.608166];
@@ -340,4 +395,342 @@
 		});
 	
 	}) // ($.location).each()
+</script>
+
+<script>
+
+	map.on('click', 'usa-counties', (e) => {
+		let coordinates = e.features[0].geometry.coordinates.slice()[0][0];
+		let county = e.features[0].properties.NAME;
+		let countyDescription = e.features[0].properties.DESCRIPTION;
+		let countyURL = e.features[0].properties.URL;
+		var countyIcon = county.replace(" ", "-").toLowerCase();  // Replace spacing with hyphens
+		// console.log(coordinates)
+		// console.log(county);
+		// console.log(e.features)
+		// console.log('coordinates length is: ' + e.features[0].geometry.coordinates.length)
+		// console.log('coordinates variables length is: ' + coordinates.length)
+		// console.log(e.features[0].geometry.coordinates.slice()[0][0]);
+		// console.log(e.features[0].properties.COUNTYFP);
+		// console.log(e.features[0].properties.NAME);
+		if (coordinates.length > 2) {
+			coordinates = coordinates[0]; // Chesterfield County has added layer of nested arrays
+		}
+		
+		if (countyDescription == undefined) {
+			countyDescription = "Not currently endorsing ranked choice voting";
+		}
+		if (countyURL == undefined) {
+			countyURL = "#";
+		}
+
+
+		let image_height, image_width = '20px';
+		fetch(`./src/assets/icons/${countyIcon}-icon.png`).then((res) => {
+				if(!res.ok) {
+					return fetch(`./src/assets/icons/RCVa-favicon.png`).then((res) => {
+						image_height = '0';
+						image_width = '0';
+						return res.blob();
+					})
+				}
+				return res.blob();
+			}).then(blob => {
+				var img = URL.createObjectURL(blob);
+
+				new mapboxgl.Popup()
+					.setLngLat(coordinates)
+					.setHTML(`<div class="popup">
+								<div class="default-background ${countyIcon}-background"></div>
+								<a href="${countyURL}" class="county-header-container">
+									<img src="${img}" alt="${county} icon" height=${image_height} width=${image_width}>
+									<h2 class="county-header">${county}</h2>
+									<img src="./src/assets/icons/arrow-right-blue.svg" alt="right arrow" height=${image_height} width=${image_width}>
+								</a>
+								<p class="county-info">
+									${countyDescription}.
+								</p>
+							</div>`)
+					.addTo(map);
+
+		}).catch(err => {
+			console.error('Request failed', err);
+		});
+
+		// Ensure that if the map is zoomed out such that multiple
+		// copies of the feature are visible, the popup appears
+		// over the copy being pointed to.
+		if (['mercator', 'equirectangular'].includes(map.getProjection().name)) {
+			while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+				coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+			}
+		}
+
+	}); // map.onClick();
+
+	map.on('load', () => {
+		map.addSource('counties-59v8uh', {
+			type: 'vector',
+			url: 'mapbox://rankedchoiceva.ahntv1l5',
+			promoteId: 'AFFGEOID'
+		});
+
+		// The feature-state dependent fill-opacity expression will render the hover effect
+		// when a feature's hover state is set to true.
+		map.addLayer({
+			'id': 'usa-counties-filler',
+			'type': 'fill',
+			'source': 'counties-59v8uh',
+			'layout': {},
+			'source-layer': 'counties-59v8uh',
+			'filter': ['==', 'STATEFP', '51'],
+			'paint': {
+				'fill-color': [
+					'case',
+					['boolean', ['feature-state', 'hover'], false],
+					'#464b6b',
+					'transparent'
+				],
+				'fill-opacity': [
+					'case',
+					['boolean', ['feature-state', 'hover'], false],
+					1,
+					0.5
+				]
+			}
+		});
+
+		// map.addLayer({
+		// 	'id': 'Fairfax City',
+		// 	'type': 'fill',
+		// 	'source': 'counties-59v8uh',
+		// 	'source-layer': 'counties-59v8uh',
+		// 	'filter': ['all',
+		// 		['==', 'NAME', 'Fairfax City'],
+		// 		// ['==', 'AFFGEOID', '0500000US51600'],
+				
+		// 	],
+		// 	'layout': {},
+		// 	'paint': {
+		// 		'fill-color': '#e05752',
+		// 		'fill-opacity': 1,
+		// 		'fill-outline-color': '#000'
+		// 	}
+		// });
+
+		let hoveredPolygonId = null;
+				
+		map.on('mousemove', 'usa-counties-filler', (e) => {
+			// console.log('on mouse move the features are: ');
+			// console.log(e.features);
+			// console.log('and the features length is: ' + e.features.length);
+			if (e.features.length > 0) {
+				if (hoveredPolygonId !== null) {
+					map.setFeatureState(
+						{ source: 'counties-59v8uh', sourceLayer: 'counties-59v8uh', id: hoveredPolygonId },
+						{ hover: false }
+					);
+				}
+				hoveredPolygonId = e.features[0].id;
+				map.setFeatureState(
+					{ source: 'counties-59v8uh', sourceLayer: 'counties-59v8uh', id: hoveredPolygonId },
+					{ hover: true }
+				);
+			}
+		});
+
+		// When the mouse leaves the state-fill layer, update the feature state of the
+		// previously hovered feature.
+		map.on('mouseleave', 'usa-counties-filler', () => {
+			if (hoveredPolygonId !== null) {
+				map.setFeatureState(
+					{ source: 'counties-59v8uh', sourceLayer: 'counties-59v8uh', id: hoveredPolygonId },
+					{ hover: false }
+				);
+			}
+			hoveredPolygonId = null;
+		});
+	});
+
+</script>
+
+<!-- Initial Mapbox script with hoverable counties and poups with the original RCVa cards -->
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoicmFua2VkY2hvaWNldmEiLCJhIjoiY201eTB3azNzMGZ0OTJrcTFrb2RoMzc1biJ9.ZbYa1MZw4vKjs8UIN8T-Qw';
+
+	// Get the location data from the displayed elements
+	const getLocationData = () => {
+		const locationElements = document.querySelectorAll('#va-county-data .rcva-location');
+		const locations = [];
+
+		locationElements.forEach(element => {
+		const name = element.getAttribute('data-name');
+		const description = element.getAttribute('data-description');
+		
+		// Format county names for css background classes
+		let background = name.replace(" ", "-").toLowerCase() + "-background";
+		
+		element.children[0].children[0].classList.add(background);
+		const body = element.children[0];
+		locations.push({name, description, body});
+		});
+		return locations;
+	};
+
+	const locations = getLocationData(); 
+	// console.log(locations);
+
+	const map = new mapboxgl.Map({
+		container: 'map', // container ID
+		style: "mapbox://styles/rankedchoiceva/cm5yo1v4g003a01qzaril9y48",
+		center: [-79.50798, 38.033554], // starting position [lng, lat]. Note that lat must be set between -90 and 90
+		minZoom: 6,
+		maxZoom: 9,
+		zoom: 6.1 // starting zoom
+	});
+
+	map.on('click', 'usa-counties', (e) => {
+		// Pull coordinates and name from geojson data
+			let coordinates = e.features[0].geometry.coordinates.slice()[0][0];
+		let county_name = e.features[0].properties.NAME;
+		
+			if (coordinates.length > 2) {
+				coordinates = coordinates[0]; // Chesterfield County has added layer of nested arrays
+			}
+		
+		// Filter the Locations CMS Collection to match geojson data
+		let card_name, card_description, card_popup;
+		
+		let location_match = locations.filter(x => {
+		return x.name == county_name;
+		});
+		
+		if (location_match.length == 0) {
+		card_description = "Not currently endorsing ranked choice voting";
+		card_popup = `<div class="popup-container">
+						<div class="popup-image default-background"></div>
+						<a href="#" class="popup-header">
+						<h2>${county_name}</h2>
+						</a>
+						<p class="popup-body">
+						${card_description}
+						</p>
+					</div>`
+		} else {
+		// card_name = location_match[0].name;
+		// card_description = location_match[0].description;
+		card_popup = location_match[0].body.outerHTML;
+		}
+		// console.log(card_name);
+		// console.log(card_description);
+		
+		// Format county names for css background classes
+		// let background = card_name.replace(" ", "-").toLowerCase() + "-background";
+				
+		let image_height, image_width = '20px';
+		
+		new mapboxgl.Popup()
+			.setLngLat(coordinates)
+			.setHTML(card_popup)
+					//.setHTML(`<div class="popup">
+			//            <div class="default-background ${background}"></div>
+			//            <a href="#" class="county-header-container">
+			//            	<img src="https://cdn.prod.website-files.com/67aa5d1a54d128d05b926c1d/67aa5d1b54d128d05b926f6b_icon-charlottesville-blue.avif" alt="${card_name} icon" height=${image_height} width=${image_width}>
+			//              <h2 class="county-header">${card_name}</h2>
+			//            </a>
+			//            <p class="county-info">
+			//              ${card_description}
+			//            </p>
+			//          </div>`)
+			.addTo(map);
+	}); // map.onClick();
+
+
+	let hoveredPolygonId = null;
+
+	map.on('load', () => {
+		map.addSource('counties-59v8uh', {
+			type: 'vector',
+			url: 'mapbox://rankedchoiceva.ahntv1l5',
+			promoteId: 'AFFGEOID'
+		});
+
+		// Shading in the current RCVa locations in red
+		locations.forEach(location => {  
+		map.addLayer({
+			'id': location.name,
+			'type': 'fill',
+			'slot': 'middle',
+			'source': 'counties-59v8uh',
+			'source-layer': 'counties-59v8uh',
+			'filter': ['==', 'NAME', location.name],
+			'layout': {},
+			'paint': {
+				'fill-color': '#e05752',
+				'fill-opacity': 1,
+				'fill-outline-color': '#000'
+				
+			},
+			},
+			);
+		});
+
+		// The feature-state dependent fill-opacity expression will render the hover effect
+		// when a feature's hover state is set to true.
+		map.addLayer({
+			'id': 'usa-counties-hover',
+			'type': 'fill',
+			'source': 'counties-59v8uh',
+			'layout': {},
+			'source-layer': 'counties-59v8uh',
+			'filter': ['==', 'STATEFP', '51'],
+			'paint': {
+				'fill-color': [
+					'case',
+					['boolean', ['feature-state', 'hover'], false],
+					'#464b6b',
+					'transparent'
+				],
+				'fill-opacity': [
+					'case',
+					['boolean', ['feature-state', 'hover'], false],
+					1,
+					0.5
+				]
+			}
+		});
+	
+		map.on('mousemove', 'usa-counties-hover', (e) => {
+			// console.log('on mouse move the features are: ');
+			// console.log(e.features);
+			// console.log('and the features length is: ' + e.features.length);
+			if (e.features.length > 0) {
+				if (hoveredPolygonId !== null) {
+					map.setFeatureState(
+						{ source: 'counties-59v8uh', sourceLayer: 'counties-59v8uh', id: hoveredPolygonId },
+						{ hover: false }
+					);
+				}
+				hoveredPolygonId = e.features[0].id;
+				map.setFeatureState(
+					{ source: 'counties-59v8uh', sourceLayer: 'counties-59v8uh', id: hoveredPolygonId },
+					{ hover: true }
+				);
+			}
+		});
+	
+		// When the mouse leaves the state-fill layer, update the feature state of the
+		// previously hovered feature.
+		map.on('mouseleave', 'usa-counties-hover', () => {
+			if (hoveredPolygonId !== null) {
+				map.setFeatureState(
+					{ source: 'counties-59v8uh', sourceLayer: 'counties-59v8uh', id: hoveredPolygonId },
+					{ hover: false }
+				);
+			}
+			hoveredPolygonId = null;
+		});
+		
+	})// map.on('load') for county hover effect & county fill
+
 </script>
