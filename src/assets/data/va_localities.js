@@ -27,7 +27,7 @@ export default {
 			"geometry": {
 				"type": "Point",
 				"coordinates": [-77.10596, 38.88371],
-				"labelAdjustment": [0.39, 0.145]
+				"labelAdjustment": [0, 0]
 			}
 		},
 		{
@@ -83,9 +83,9 @@ export default {
 			},
 			"geometry": {
 				"type": "Point",
-				// "coordinates": [-77.60887, 39.06769],
+				"coordinates": [-77.60887, 39.06769],
 				"labelAdjustment": [0, 0],
-				"coordinates": [-77.65887, 39.18869],
+				// "coordinates": [-77.65887, 39.18869],
 			}
 		},
 		{
