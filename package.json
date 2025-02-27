@@ -1,0 +1,15 @@
+{
+  "name": "va-mapping",
+  "version": "1.0.0",
+  "description": "County geojson data is pulled from: https://gist.github.com/sdwfrost/d1c73f91dd9d175998ed166eb216994a",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "prettier": "^3.5.2"
+  }
+}

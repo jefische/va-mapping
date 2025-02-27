@@ -1,4 +1,5 @@
 import county_list from '../assets/data/usa_counties.js';
+import va_localities_opendatasoft from '../assets/data/va_localities_opendatasoft.js';
 
 var VA_counties = county_list.features.filter((x) => {
 	return x.properties.STATEFP == '51'; // Virginia
@@ -31,5 +32,18 @@ const getLocationData = () => {
 };
 
 const locations = getLocationData(); 
+console.log('number of counties and cities: ' + va_localities_opendatasoft.features.length)
 
-// console.log(locations[0].body)
+let sortedCounties = va_localities_opendatasoft.features.sort((a, b) => {
+	if (a.name > b.name) {
+		return 1;
+	} else {
+		return -1;
+	}
+})
+
+let j = 1;
+for (let feature of sortedCounties) {
+	console.log(j + ": " + feature.namelsad);
+	j++;
+}
