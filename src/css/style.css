@@ -47,21 +47,75 @@
 	height: 50%;
 }
 
+/* card backgrounds (Webflow) **************************/
+.default-background {
+	background-color: #ddd;
+}
+
+.albemarle-background {
+	background-image: url("https://cdn.prod.website-files.com/67aa5d1a54d128d05b926c1d/67aa5d1b54d128d05b926f60_banner-albemarle.avif");
+	background-position: center;
+	background-size: cover;
+}
+
+.albemarle-icon-blue {
+	background-image: url();
+}
+
+.arlington-background {
+	background-image: url("https://cdn.prod.website-files.com/67aa5d1a54d128d05b926c1d/67aa5d1a54d128d05b926d78_banner-arlington.avif");
+	background-position: center;
+	background-size: cover;
+}
+
+.charlottesville-background {
+	background-image: url("https://cdn.prod.website-files.com/67aa5d1a54d128d05b926c1d/67aa5d1a54d128d05b926e31_banner-charlottesville.avif");
+	background-position: center;
+	background-size: cover;
+}
+
+.fairfax-city-background {
+	background-image: url("https://cdn.prod.website-files.com/67aa5d1a54d128d05b926c1d/67aa5d1b54d128d05b926f76_banner-fairfax-city.avif");
+	background-position: center;
+	background-size: cover;
+}
+
+.falls-church-background {
+	background-image: url("https://cdn.prod.website-files.com/67aa5d1a54d128d05b926c1d/67aa5d1b54d128d05b926f91_banner-falls-church.webp");
+	background-position: center;
+	background-size: cover;
+}
+
+.loudoun-background {
+	background-image: url("https://cdn.prod.website-files.com/67aa5d1a54d128d05b926c1d/67aa5d1b54d128d05b926f74_banner-loudoun.avif");
+	background-position: center;
+	background-size: cover;
+}
+
+.newport-news-background {
+	background-image: url("https://cdn.prod.website-files.com/67aa5d1a54d128d05b926c1d/67aa5d1b54d128d05b926f20_banner-newport-news.avif");
+	background-position: center;
+	background-size: cover;
+}
+
 /* containers **************************/
 .map-container {
 	display: flex;
 	justify-content: center;
 	padding-top: 50px;
 	position: relative;
+
+	padding-left: 2.5rem;
+	padding-right: 2.5rem;
 }
 
 /* VA fill color is currently: #944242 */
-#map, #map2 { 
+#map,
+#map2 {
 	border: 1px solid;
-	height: 600px;
+	height: 550px;
 	transform-box: border-box;
-	width: 60%; 
-	
+	width: 100%;
 }
 
 /* colors **************************/
@@ -83,7 +137,7 @@
 	display: flex;
 	flex-direction: column;
 	font:
-		12px/20px 'Helvetica Neue',
+		12px/20px "Helvetica Neue",
 		Arial,
 		Helvetica,
 		sans-serif;
@@ -102,7 +156,6 @@
 	font-size: 14px;
 	font-weight: 700;
 	gap: 10px;
-	
 }
 
 .legend div span {
@@ -114,6 +167,43 @@
 	width: 30px; */
 }
 
+/* mapbox markers (Webflow) **************************/
+
+.marker-adopted {
+	background-color: #e05752;
+	/* background-image: url('./src/assets/icons/RCVa-favicon.png'); */
+	background-size: cover;
+	border: 1px solid #333;
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+}
+.marker-considering {
+	background-color: #464b6b;
+	/* background-image: url('./src/assets/icons/circle-question.svg'); */
+	background-size: cover;
+	border: 1px solid #333;
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+}
+
+.marker-used {
+	background-color: #fff;
+	/* background-image: url('./src/assets/icons/icons8-ballot-50.png'); */
+	background-size: cover;
+	border: 1px solid #333;
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+}
+
+/* mapbox popups (Webflow) **************************/
+/* mapbox custom class styling **************************/
+.popup-header h2 {
+	color: #464b6b;
+	font-size: 20px;
+}
 /* mapbox popup styles for cards with backgrounds **************************/
 .mapboxgl-popup-content {
 	border: 1px solid;
@@ -136,7 +226,6 @@
 	height: 200px;
 	text-align: center;
 	width: 300px; */
-	
 }
 
 a.county-header-container {

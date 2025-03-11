@@ -141,11 +141,13 @@
 		</style>
 
 		<div class="map-container">
-			<div id="map">
-				<div class="legend">
-					<div class="item"><span class="marker-adopted"></span>Adopted ranked choice voting</div>
-					<div class="item"><span class="marker-considering"></span>Considering ranked choice voting</div>
-					<div class="item"><span class="marker-used"></span>Used ranked choice voting previously</div>
+			<div style="max-width: 69rem; width: 100%">
+				<div id="map">
+					<div class="legend">
+						<div class="item"><span class="marker-adopted"></span>Adopted ranked choice voting</div>
+						<div class="item"><span class="marker-considering"></span>Considering ranked choice voting</div>
+						<div class="item"><span class="marker-used"></span>Used ranked choice voting previously</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -183,6 +185,7 @@
 
 			// const geojson = va_localities;
 			const geojson = va_localities_v2;
+			// console.log(geojson.features.slice(1, 10));
 
 			const map = new mapboxgl.Map({
 				container: "map", // container ID
@@ -191,9 +194,10 @@
 				// style: "mapbox://styles/rankedchoiceva/cm7ap94ap004y01s61xh6gvha", // VA shapefile map
 				style: "mapbox://styles/rankedchoiceva/cm7c9cjul004s01qoh4pl5v59", // VA shapefile from Census.gov (https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.html)
 				center: [-79.50798, 37.833554], // starting position [lng, lat]. Note that lat must be set between -90 and 90
+				center: [-79.50798, 38.113554],
 				// minZoom: 6,
 				// maxZoom: 6,
-				zoom: 6.4, // starting zoom
+				zoom: 6.5, // starting zoom
 				// maxBounds: bounds
 				// sprite: 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/sprite'
 			});
@@ -204,7 +208,7 @@
 			map.doubleClickZoom.disable();
 
 			// add markers to map
-			for (const feature of geojson.features) {
+			for (const feature of geojson.features.slice(1, 10)) {
 				// create a HTML element for each feature
 				// const el = document.createElement('div');
 				// el.textContent = 'Charlottesville';
@@ -222,29 +226,30 @@
 				// el.appendChild(label);
 
 				// make a marker for each feature and add it to the map
-				let marker = new mapboxgl.Marker() // add {draggable: true} as a parameter to make the markers draggable.
-					.setLngLat(feature.geo_point_2d);
+				let marker = new mapboxgl.Marker({ fill: "blue" }) // add {draggable: true} as a parameter to make the markers draggable.
+					.setLngLat(feature.geo_point_2d)
+					.addTo(map);
 				// .setLngLat(feature.geometry.coordinates);
-				// .addTo(map);
 				// .setPopup(popup);
 
 				// const addLabel = document.querySelector('.mapboxgl-marker')
 				// addLabel.appendChild(label);
 
 				// let popup = new mapboxgl.Popup().setText(feature.properties.name).addTo(map);
-				let popup = new mapboxgl.Popup().setText(feature.name).addTo(map);
+				let popup = new mapboxgl.Popup().setText(feature.name);
+				// marker.setPopup(popup).addTo(map);
+				marker.setPopup(popup);
 
 				let element = marker.getElement();
 				element.addEventListener("mouseenter", () => popup.addTo(map));
 				element.addEventListener("mouseleave", () => popup.remove());
+
 				// let element_popup = popup.getElement();
 				// element_popup.addEventListener('mouseleave', () => popup.remove());
 
-				marker.setPopup(popup).addTo(map);
-
-				// let marker_label = new mapboxgl.Marker(label, {draggable: true})
-				// 	.setLngLat(feature.geometry.coordinatesLabel)
-				// 	.addTo(map);
+				let marker_label = new mapboxgl.Marker(label, { draggable: true })
+					.setLngLat(feature.geo_point_2d)
+					.addTo(map);
 
 				// function onDragEnd() {
 				// 	const coordinates = document.getElementById(`coordinates-${feature.properties.name.replace(' ', '-').toLowerCase()}`);
@@ -263,6 +268,20 @@
 				// marker.on('dragend', onDragEnd);
 				// marker_label.on('dragend', onDragEndLabel);
 			}
+
+			//Change fill color of markers
+			const getMarkers = () => {
+				const circleElements = document.querySelectorAll(".mapboxgl-marker svg circle");
+
+				circleElements[0].setAttribute("fill", "#000");
+				circleElements.forEach((element) => {
+					element.setAttribute("fill", "#000");
+				});
+
+				const markerElements = document.querySelectorAll(".mapboxgl-marker");
+				console.log(markerElements);
+			};
+			getMarkers();
 
 			// const layerIDs = []; // This array will contain a list used to filter against.
 			// const countyTypes = ['county', 'city']; // This array will contain a list used to filter against.
