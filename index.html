@@ -187,7 +187,7 @@
 			const geojson = va_localities_v2;
 			// console.log(geojson.features.slice(1, 10));
 
-			const map = new mapboxgl.Map({
+			let map = new mapboxgl.Map({
 				container: "map", // container ID
 				// style: "mapbox://styles/rankedchoiceva/cm5yo1v4g003a01qzaril9y48/draft",
 				// style: "mapbox://styles/rankedchoiceva/cm5yo1v4g003a01qzaril9y48", // original map shared with Sally
@@ -206,6 +206,26 @@
 			map.dragPan.disable();
 			map.dragRotate.disable();
 			map.doubleClickZoom.disable();
+
+			function setZoom() {
+				if (window.innerWidth <= 780) {
+					console.log("window width is: " + window.innerWidth);
+					map.setZoom(5.4);
+				} else if (window.innerWidth <= 880) {
+					console.log("window width is: " + window.innerWidth);
+					map.setZoom(5.8);
+				} else if (window.innerWidth <= 992) {
+					console.log("window width is: " + window.innerWidth);
+					map.setZoom(6);
+				} else if (window.innerWidth < 1200) {
+					console.log("window width is: " + window.innerWidth);
+					map.setZoom(6.2);
+				} else {
+					console.log("window width is: " + window.innerWidth);
+					map.setZoom(6.5);
+				}
+			}
+			window.addEventListener("resize", setZoom);
 
 			// add markers to map
 			for (const feature of geojson.features.slice(1, 10)) {
@@ -279,7 +299,7 @@
 				});
 
 				const markerElements = document.querySelectorAll(".mapboxgl-marker");
-				console.log(markerElements);
+				// console.log(markerElements);
 			};
 			getMarkers();
 
@@ -287,6 +307,24 @@
 			// const countyTypes = ['county', 'city']; // This array will contain a list used to filter against.
 			// const filterGroup = document.getElementById('filter-group');
 			map.on("load", () => {
+				map.addSource("cb_2018_us_state_500k-dkbwnf", {
+					type: "vector",
+					url: "mapbox://rankedchoiceva.28ffvajf",
+				});
+
+				// The feature-state dependent fill-opacity expression will render the hover effect
+				// when a feature's hover state is set to true.
+				map.addLayer({
+					id: "va-state",
+					type: "fill",
+					source: "cb_2018_us_state_500k-dkbwnf",
+					layout: {},
+					"source-layer": "cb_2018_us_state_500k-dkbwnf",
+					filter: ["==", "NAME", "Virginia"],
+					paint: {
+						"fill-color": "#ccc",
+					},
+				});
 				// 	// map.loadImage('./src/assets/icons/RCVa-favicon.png', (error, image) => {
 				// 	// 	if (error) throw error;
 				// 	// 	map.addImage('rcva-icon', image);

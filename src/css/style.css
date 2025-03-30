@@ -101,21 +101,27 @@
 /* containers **************************/
 .map-container {
 	display: flex;
+	height: 550px;
 	justify-content: center;
 	padding-top: 50px;
 	position: relative;
 
 	padding-left: 2.5rem;
 	padding-right: 2.5rem;
+
+	/* max-width: 69rem; */
+	/* width: 100%; */
 }
 
 /* VA fill color is currently: #944242 */
 #map,
 #map2 {
+	/* position: relative; */
 	border: 1px solid;
 	height: 550px;
 	transform-box: border-box;
 	width: 100%;
+	/* width: inherit; */
 }
 
 /* colors **************************/
