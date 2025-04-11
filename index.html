@@ -227,6 +227,27 @@
 			}
 			window.addEventListener("resize", setZoom);
 
+			// Manage cards (Webflow custom code)
+			let defaultCard = null;
+			const allCards = document.querySelectorAll(".mapbox-local-card-container .collection-item");
+			allCards.forEach((card, index) => {
+				let cardCounty = card.querySelector(".sidebar_title-wrapper .county_name").textContent.trim();
+
+				if (cardCounty === "Arlington") {
+					defaultCard = card;
+				}
+			});
+
+			function showCard(card) {
+				card.style.display = "block";
+			}
+
+			function hideCards() {
+				allCards.forEach((card, index) => {
+					card.style.display = "none";
+				});
+			}
+
 			// add markers to map
 			for (const feature of geojson.features.slice(1, 10)) {
 				// create a HTML element for each feature
@@ -263,6 +284,20 @@
 				let element = marker.getElement();
 				element.addEventListener("mouseenter", () => popup.addTo(map));
 				element.addEventListener("mouseleave", () => popup.remove());
+
+				// Add listeners for marker clicks to update card
+				element.addEventListener("click", () => {
+					let activeCard = null;
+					allCards.forEach((card) => {
+						let cardCounty = card.querySelector(".sidebar_title-wrapper .county_name").textContent;
+						if (cardCounty == feature.name) {
+							activeCard = card;
+						}
+					});
+
+					hideCards();
+					showCard(activeCard);
+				});
 
 				// let element_popup = popup.getElement();
 				// element_popup.addEventListener('mouseleave', () => popup.remove());
